@@ -62,7 +62,7 @@
        const token = response.data.access_token;
     localStorage.setItem('token', token);
 
-    // Configura Axios per usare il token nelle richieste successive
+    // Configura Axios per usare il token nelle richieste successiv
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
     // Reindirizza alla dashboard
