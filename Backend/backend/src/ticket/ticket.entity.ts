@@ -6,8 +6,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { User } from 'src/user/user.entity';
+import { Messaggio } from 'src/messaggio/messaggio.entity';
 
 @Entity()
 export class Ticket {
@@ -38,4 +40,7 @@ export class Ticket {
 
   @Column({ nullable: true })
   closedAt: Date;
+
+  @OneToMany(() => Messaggio, (messaggio) => messaggio.ticket)
+  messaggi: Messaggio[];
 }
