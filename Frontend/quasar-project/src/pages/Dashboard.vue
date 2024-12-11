@@ -13,7 +13,7 @@
             <div v-if="isAdmin">
               <h2>Gestione ticket Amministratore</h2>
               <q-list bordered>
-                <q-item v-for="ticket in tickets" :key="ticket.id">
+                <q-item v-for="ticket in tickets" :key="ticket.id" clickable @click="openMessages(ticket.id)">
                   <q-item-section>
                     <div><strong>Titolo:</strong> {{ ticket.titolo }}</div>
                     <div><strong>Descrizione</strong>{{ ticket.descrizione }}</div>
@@ -42,7 +42,7 @@
             
             <!-- Lista dei ticket aperti dal cliente -->
             <q-list bordered>
-              <q-item v-for="ticket in tickets" :key="ticket.id">
+              <q-item v-for="ticket in tickets" :key="ticket.id" clickable @click="openMessages(ticket.id)">
                 <q-item-section>
                   <div><strong>Titolo:</strong> {{ ticket.titolo }}</div>
                   <div><strong>Descrizione:</strong> {{ ticket.descrizione }}</div>
@@ -142,6 +142,11 @@ const statusOptions = [
   { label: 'In Progress', value: 'in_progress' },
   { label: 'Closed', value: 'closed' }
 ];
+
+
+const openMessages = (ticketId: number) => {
+  router.push(`/chat/${ticketId}`);
+};
 
 const CatturaAdminUsers = async () => {
   try {

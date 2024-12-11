@@ -43,7 +43,7 @@ export class MessaggioService {
   async getMessagesByTicket(ticketId: number) {
     return this.messageRepository.find({
       where: { ticket: { id: ticketId } },
-      relations: ['sender', 'ticket'],
+      relations: ['inviatoDa', 'ticket'],
       order: { createdAt: 'ASC' },
     });
   }

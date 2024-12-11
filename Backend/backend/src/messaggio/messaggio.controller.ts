@@ -9,14 +9,15 @@ export class MessageController {
   @Post(':ticketId')
   async createMessage(
     @Param('ticketId') ticketId: number,
-    @Body() createMessageDto: { descrizione: string },
-    @Body('userId') userId: number,
+    @Body() createMessageDto: { descrizione: string; userId: number },
   ) {
-    return this.messageService.createMessage(
+    console.log('Dati ricevuti dal frontend:', {
       ticketId,
-      userId,
-      createMessageDto,
-    );
+      descrizione: createMessageDto.descrizione,
+      userId: createMessageDto.userId,
+    });
+    const { descrizione, userId } = createMessageDto;
+    return this.messageService.createMessage(ticketId, userId, { descrizione });
   }
   @Get(':ticketId')
   async getMessages(@Param('ticketId') ticketId: number) {

@@ -7,6 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { User } from './user/user.entity';
 import { TicketModule } from './ticket/ticket.module';
 import { Ticket } from './ticket/ticket.entity';
+import { Messaggio } from './messaggio/messaggio.entity';
+import { MessaggioModule } from './messaggio/messaggio.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -16,11 +18,12 @@ import { Ticket } from './ticket/ticket.entity';
       username: 'root',
       password: 'Formula12.',
       database: 'ticketing_db',
-      entities: [User, Ticket],
-      synchronize: false,
+      entities: [User, Ticket, Messaggio],
+      synchronize: true,
       logging: false,
     }),
     UserModule,
+    MessaggioModule,
     AuthModule,
     TicketModule,
   ],
