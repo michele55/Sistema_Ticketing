@@ -15,7 +15,7 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ nullable: false })
   role: string; // E.g., "admin", "operator", "customer"
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

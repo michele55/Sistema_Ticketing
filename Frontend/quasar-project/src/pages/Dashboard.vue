@@ -1,122 +1,163 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <q-page class="flex flex-center">
-      <!-- Card per visualizzare i dettagli della Dashboard -->
-      <q-card style="width: 100%">
-        <q-card-section>
-          <!-- Visualizza il nome dell'utente -->
-          <div v-if="user">
-            <div class="text-h6">
-              Benvenuto, {{ user.nome }}!
-            </div>
-            <!-- Dashboard per l'amministratore -->
-            <div v-if="isAdmin">
-              <h2>Gestione ticket Amministratore</h2>
-              <q-list bordered>
-                <q-item v-for="ticket in tickets" :key="ticket.id" clickable @click="openMessages(ticket.id)">
+  <q-page class="dashboard-page q-py-md">
+    <q-card style="width: 100%">
+      <q-card-section>
+        <template v-if="user">
+          <div class="text-h5 q-mb-md">Benvenuto, {{ user.nome }}!</div>
+
+          <!-- Tabs di Navigazione -->
+          <q-tabs 
+            v-model="currentTab" 
+            dense align="left" 
+            active-color="primary" 
+            indicator-color="primary">
+            <q-tab name="tickets_aperti" icon="article" label="Ticket Aperti" />
+            <q-tab name="tickets_chiusi" icon="archive" label="Ticket Chiusi" />
+            <q-tab v-if="!isAdmin" name="nuovo_ticket" icon="add" label="Nuovo Ticket" />
+          </q-tabs>
+
+          <q-tab-panels v-model="currentTab" animated>
+            <!-- Pannello Ticket Aperti -->
+            <q-tab-panel name="tickets_aperti">
+              <h2 class="text-h6">Ticket Aperti</h2>
+              <q-list bordered padding>
+                <q-item v-for="ticket in ticketsAperti" :key="ticket.id">
                   <q-item-section>
-                    <div><strong>Titolo:</strong> {{ ticket.titolo }}</div>
-                    <div><strong>Descrizione</strong>{{ ticket.descrizione }}</div>
-                    <div><strong>Nome dell'utente che ha creato il ticket e rispettivo id:</strong> {{ ticket.user?.nome + '(' + ticket.user?.id +')'|| 'Non disponibile' }}</div>
-                    <div><strong>Assegnato a:</strong> {{ ticket.assignedTo?.nome }}</div>
-                    <div><strong>Stato:</strong> {{ ticket.stato }}</div>
-                    <q-separator />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-btn
-                      v-if="ticket.stato !== 'closed'"
-                       label="Gestisci"
-                        color="primary"
-                        @click="openManageModal(ticket)"
+                    <q-item-label class="text-bold">Titolo: {{ ticket.titolo }}</q-item-label>
+                    <q-item-label>Descrizione: {{ ticket.descrizione }}</q-item-label>
+                    <q-item-label>
+                      Stato:
+                      <q-badge 
+                        :color="ticket.stato === 'closed' ? 'grey' : 'green'" 
+                        :label="ticket.stato.toUpperCase()" 
                       />
-                       <q-badge v-else color="grey" label="Chiuso" />
-                   </q-item-section>
-                  <q-separator />
+                    </q-item-label>
+                  </q-item-section>
+
+                  <q-item-section side top>
+                    <!-- Bottone Apri dettagli (Cliente) -->
+                    <q-btn 
+                      icon="chat" 
+                      label="Apri dettagli ticket" 
+                      color="secondary" 
+                      v-if="!isAdmin" 
+                      @click="openMessages(ticket.id)" 
+                    />
+                    
+                    <!-- Bottone Gestisci (Admin) -->
+                    <q-btn 
+                      icon="manage_accounts" 
+                      label="Gestisci" 
+                      color="primary" 
+                      v-if="isAdmin && ticket.stato !== 'closed'" 
+                      @click="openManageModal(ticket)" 
+                    />
+                    <q-btn 
+                      icon="chat" 
+                      label="Apri Chat" 
+                        class="q-ml-sm"
+                      color="primary" 
+                      v-if="isAdmin && ticket.stato !== 'closed'" 
+                      @click="openMessages(ticket.id)" 
+                    />
+                  </q-item-section>
                 </q-item>
               </q-list>
-            </div>
-  
-            <!-- Dashboard per il cliente -->
-            <div v-else>
-            <h2>Dashboard Cliente</h2>
-            
-            <!-- Lista dei ticket aperti dal cliente -->
-            <q-list bordered>
-              <q-item v-for="ticket in tickets" :key="ticket.id" clickable @click="openMessages(ticket.id)">
-                <q-item-section>
-                  <div><strong>Titolo:</strong> {{ ticket.titolo }}</div>
-                  <div><strong>Descrizione:</strong> {{ ticket.descrizione }}</div>
-                  <div><strong>Stato:</strong> {{ ticket.stato }}</div>
-                  <q-separator />
-                </q-item-section>
-              </q-item>
-            </q-list>
-            
-            <!-- Modulo per creare un nuovo ticket -->
-            <q-form @submit="openNewTicket">
-              <q-input v-model="titolo" label="Titolo" filled required />
-              <q-input v-model="descrizione" label="Descrizione" type="textarea" filled required />
-              <q-btn label="Invia Ticket" color="primary" type="submit" class="q-mt-md" />
-            </q-form>
-          </div>
-          
-          </div>
-  
-          <!-- Messaggio di caricamento se l'utente non è ancora stato caricato -->
-          <div v-else>
-            <q-spinner color="primary" size="50px" />
-            <p>Caricamento dati utente...</p>
-          </div>
-        </q-card-section>
-      </q-card>
-    </q-page>
+            </q-tab-panel>
 
-    <q-dialog v-model="gestisciTicketAperto">
-  <q-card style="min-width: 400px">
-    <q-card-section>
-      <div class="text-h6">Gestisci Ticket: {{ selectedTicket?.titolo }}</div>
-    </q-card-section>
+            <!-- Pannello Ticket Chiusi -->
+            <q-tab-panel name="tickets_chiusi">
+              <h2 class="text-h6">Ticket Chiusi</h2>
+              <q-list bordered padding>
+                <q-item v-for="ticket in ticketsChiusi" :key="ticket.id">
+                  <q-item-section>
+                    <q-item-label class="text-bold">Titolo: {{ ticket.titolo }}</q-item-label>
+                    <q-item-label>Descrizione: {{ ticket.descrizione }}</q-item-label>
+                    <q-item-label>
+                      Stato:
+                      <q-badge color="grey" label="CHIUSO" />
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-tab-panel>
 
-    <q-card-section>
-      <q-select
-        v-model="selectedStatus"
-        :options="statusOptions.map(option => option.value)"
-        label="Cambia Stato"
-        filled
-        required
-      />
+            <!-- Pannello Nuovo Ticket -->
+            <q-tab-panel v-if="!isAdmin" name="nuovo_ticket">
+              <h2 class="text-h6">Crea Nuovo Ticket</h2>
+              <q-card flat bordered>
+                <q-card-section>
+                  <q-form @submit="openNewTicket">
+                    <q-input v-model="titolo" label="Titolo" filled required />
+                    <q-input v-model="descrizione" label="Descrizione" type="textarea" filled required />
+                    <q-btn label="Invia" color="primary" type="submit" class="q-mt-md" />
+                  </q-form>
+                </q-card-section>
+              </q-card>
+            </q-tab-panel>
+          </q-tab-panels>
+        </template>
 
-      <!-- Descrizione obbligatoria quando in_progress -->
-      <q-input
-        v-if="selectedStatus === 'in_progress'"
-        v-model="aggiornaDescrizione"
-        label="Descrizione"
-        filled
-        required
-        :rules="[val => !!val || 'La descrizione è obbligatoria']"
-      />
-        <!-- Assegnato a obbligatorio quando in_progress -->
-        <q-select
-        v-if="selectedStatus === 'in_progress'"
-        v-model="assignedTo"
-        :options="adminUsers.map(admin => admin.id)"
-        :option-label="option => adminUsers.find(admin => admin.id === option)?.nome || ''"
-        label="Assegnato a"
-        filled
-        required
-        :rules="[val => !!val || 'Assegnare un responsabile è obbligatorio']"
-      />
+        <!-- Modale Gestione Ticket -->
+        <q-dialog v-model="gestisciTicketAperto">
+          <q-card style="min-width: 400px">
+            <q-card-section>
+              <div class="text-h6">Gestisci Ticket: {{ selectedTicket?.titolo }}</div>
+            </q-card-section>
 
-    </q-card-section>
+            <q-card-section>
+              <!-- Uso di statusOptions -->
+              <q-select
+                v-model="selectedStatus"
+                :options="statusOptions.map(option => option.value)"
+                label="Cambia Stato"
+                filled
+                required
+              />
 
-    <q-card-actions align="right">
-      <q-btn flat label="Chiudi" color="primary" @click="closeManageModal" />
-      <q-btn label="Salva" color="positive" @click="aggiornaStatoTicket" />
-    </q-card-actions>
-  </q-card>
-</q-dialog>
+              <!-- Descrizione Obbligatoria -->
+              <q-input
+                v-if="selectedStatus === 'in_progress'"
+                v-model="aggiornaDescrizione"
+                label="Descrizione"
+                filled
+                required
+                :rules="[val => !!val || 'La descrizione è obbligatoria']"
+              />
 
-  </template>
+              <!-- Assegnato a Obbligatorio -->
+              <q-select
+                v-if="selectedStatus === 'in_progress'"
+                v-model="assignedTo"
+                :options="adminUsers.map(admin => admin.id)"
+                :option-label="option => adminUsers.find(admin => admin.id === option)?.nome || ''"
+                label="Assegnato a"
+                filled
+                required
+                :rules="[val => !!val || 'Assegnare un responsabile è obbligatorio']"
+              />
+            </q-card-section>
+
+            <q-card-actions align="right">
+              <q-btn flat label="Chiudi" color="primary" @click="closeManageModal" />
+              <q-btn label="Salva" color="positive" @click="aggiornaStatoTicket" />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+
+        <template v-if="!user">
+        <q-spinner color="primary" size="50px" />
+        <p>Caricamento dati utente...</p>
+      </template>
+
+      </q-card-section>
+    </q-card>
+  </q-page>
+</template>
+
+
+
   
   <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue';
@@ -133,7 +174,14 @@
   const descrizione = ref<string>('');
   const aggiornaDescrizione = ref <string>('');
   const router = useRouter();
+  const currentTab = ref('tickets_aperti');
+  const ticketsAperti = computed(() =>
+  tickets.value.filter((ticket) => ticket.stato !== 'closed')
+);
 
+const ticketsChiusi = computed(() =>
+  tickets.value.filter((ticket) => ticket.stato === 'closed')
+);
 const gestisciTicketAperto = ref(false);
 const selectedTicket = ref<Ticket | null>(null);
 const selectedStatus = ref('');
@@ -343,6 +391,23 @@ aggiornaDescrizione.value = '';
   </script>
   
   <style scoped>
-  /* Puoi aggiungere eventuali stili personalizzati qui */
+  .dashboard-page {
+  padding-top: 60px; /* Imposta uno spazio sotto la barra azzurra */
+}
+
+.text-bold {
+  font-weight: bold;
+}
+
+.text-h5 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.q-page {
+  background: #f4f4f9;
+  padding: 20px;
+}
   </style>
   
