@@ -185,6 +185,7 @@ const ticketsChiusi = computed(() =>
 const gestisciTicketAperto = ref(false);
 const selectedTicket = ref<Ticket | null>(null);
 const selectedStatus = ref('');
+const messaggi = ref<{ id: number; descrizione: string; createdAt: string; inviatoDa: User }[]>([]);
 const statusOptions = [
   { label: 'Open', value: 'open' },
   { label: 'In Progress', value: 'in_progress' },
@@ -264,7 +265,6 @@ const aggiornaStatoTicket = async () => {
       { 
         stato: selectedStatus.value,
         assignedTo: assignedTo.value, // Invia l'ID al backend
-        descrizione: aggiornaDescrizione.value,
         
        },
        
@@ -274,6 +274,24 @@ const aggiornaStatoTicket = async () => {
         }
       }
     );
+    if (aggiornaDescrizione.value.trim()) {
+      const response = await axios.post(
+        `http://localhost:3000/message/${selectedTicket.value.id}`,
+        {
+          descrizione: aggiornaDescrizione.value,
+          userId: user.value?.id, // Utente autenticato dal token JWT
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Aggiorna i messaggi nella chat
+      messaggi.value.push(response.data);
+      aggiornaDescrizione.value = ''; // Resetta il campo di input
+    }
     console.log('Payload inviato al backend:', {
   stato: selectedStatus.value,
   assignedTo: assignedTo.value,
