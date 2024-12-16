@@ -5,7 +5,6 @@
       <q-card-section>
         <template v-if="user">
           <div class="text-h5 q-mb-md">Benvenuto, {{ user.nome }}!</div>
-
           <!-- Tabs di Navigazione -->
           <q-tabs 
             v-model="currentTab" 
@@ -16,7 +15,6 @@
             <q-tab name="tickets_chiusi" icon="archive" label="Ticket Chiusi" />
             <q-tab v-if="!isAdmin && !Sviluppatore" name="nuovo_ticket" icon="add" label="Nuovo Ticket" />
           </q-tabs>
-
           <q-tab-panels v-model="currentTab" animated>
             <!-- Pannello Ticket Aperti -->
             <q-tab-panel name="tickets_aperti">
@@ -29,7 +27,7 @@
                     <q-item-label>
                       Stato:
                       <q-badge 
-                        :color="ticket.stato === 'closed' ? 'grey' : 'green'" 
+                        :color=" getTicketStatusColor(ticket.stato)" 
                         :label="ticket.stato.toUpperCase()" 
                       />
                     </q-item-label>
@@ -183,6 +181,20 @@
   const currentTab = ref('tickets_aperti');
   const Sviluppatore = computed(() => user.value?.role === 'sviluppatore');
   const customer= computed(() => user.value?.role === 'customer');
+
+  function getTicketStatusColor(status: string): string {
+  switch (status) {
+    case 'closed':
+      return 'grey';
+    case 'in_progress':
+      return 'orange';
+    case 'open':
+      return 'green';
+    default:
+      return 'blue';
+  }
+}
+
 
   const ticketsAperti = computed(() => {
   if (isAdmin.value) {

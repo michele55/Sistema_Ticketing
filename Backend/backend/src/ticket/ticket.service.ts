@@ -49,7 +49,10 @@ export class TicketService {
   }
   // Metodo per ottenere un ticket per ID
   async findOne(id: number): Promise<Ticket> {
-    return this.ticketRepository.findOne({ where: { id } });
+    return this.ticketRepository.findOne({
+      where: { id },
+      relations: ['user'], // Include la relazione con l'utente creatore
+    });
   }
   async aggiornaStato(
     id: number,
