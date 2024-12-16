@@ -48,7 +48,12 @@ export class AppModule implements OnApplicationBootstrap {
       const existingAdmin = await this.userRepository.findOneBy({
         email: 'admin@example.com',
       });
-
+      const existingDeveloper = await this.userRepository.findOneBy({
+        email: 'developer@example.com',
+      });
+      const existingCustomer = await this.userRepository.findOneBy({
+        email: 'customer@example.com',
+      });
       if (!existingAdmin) {
         const adminUser = this.userRepository.create({
           nome: 'Admin',
@@ -57,7 +62,19 @@ export class AppModule implements OnApplicationBootstrap {
             '$2a$12$yLR1Ra1oLYiYEuRTYsWZd.qpnBHm6N6I5oGyMv.t6Ax3bT4W2ZClW', // Ricorda di hasharlo in produzione
           role: 'admin',
         });
-
+        await this.userRepository.save(adminUser);
+      }
+      if (!existingDeveloper) {
+        const DeveloperUser = this.userRepository.create({
+          nome: 'Developer',
+          email: 'developer@example.com',
+          password:
+            '$2a$12$yLR1Ra1oLYiYEuRTYsWZd.qpnBHm6N6I5oGyMv.t6Ax3bT4W2ZClW', // Ricorda di hasharlo in produzione
+          role: 'sviluppatore',
+        });
+        await this.userRepository.save(DeveloperUser);
+      }
+      if (!existingCustomer) {
         const customerUser = this.userRepository.create({
           nome: 'Customer',
           email: 'customer@example.com',
@@ -65,10 +82,7 @@ export class AppModule implements OnApplicationBootstrap {
             '$2a$12$yLR1Ra1oLYiYEuRTYsWZd.qpnBHm6N6I5oGyMv.t6Ax3bT4W2ZClW',
           role: 'customer',
         });
-
-        await this.userRepository.save([adminUser, customerUser]);
-
-        console.log('Popolamento completato con successo!');
+        await this.userRepository.save(customerUser);
       } else {
         console.log('I dati sono già stati popolati.');
       }

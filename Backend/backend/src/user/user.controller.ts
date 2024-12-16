@@ -52,4 +52,10 @@ export class UserController {
   async getAdminUsers(): Promise<User[]> {
     return this.userService.findUsersByRuolo('admin');
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('sviluppatore')
+  async getDeveloperUsers(): Promise<User[]> {
+    return this.userService.findUsersByRuolo('sviluppatore');
+  }
 }

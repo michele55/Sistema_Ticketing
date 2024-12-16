@@ -33,11 +33,17 @@ export class TicketService {
       return this.ticketRepository.find({
         relations: ['user', 'assignedTo'], // Includi i dati dell'utente associato
       });
+    } else if (user.role === 'sviluppatore') {
+      // Sviluppatore vede solo i ticket assegnati a lui
+      return this.ticketRepository.find({
+        where: { assignedTo: { id: user.id } },
+        relations: ['user', 'assignedTo'],
+      });
     } else {
-      // Carica solo i ticket dell'utente specifico con le relazioni
+      // Utente generico vede solo i propri ticket
       return this.ticketRepository.find({
         where: { user: { id: user.id } },
-        relations: ['user', 'assignedTo'], // Includi i dati dell'utente associato
+        relations: ['user', 'assignedTo'],
       });
     }
   }

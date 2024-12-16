@@ -14,7 +14,7 @@
             indicator-color="primary">
             <q-tab name="tickets_aperti" icon="article" label="Ticket Aperti" />
             <q-tab name="tickets_chiusi" icon="archive" label="Ticket Chiusi" />
-            <q-tab v-if="!isAdmin" name="nuovo_ticket" icon="add" label="Nuovo Ticket" />
+            <q-tab v-if="!isAdmin && !Sviluppatore" name="nuovo_ticket" icon="add" label="Nuovo Ticket" />
           </q-tabs>
 
           <q-tab-panels v-model="currentTab" animated>
@@ -53,6 +53,13 @@
                       v-if="isAdmin && ticket.stato !== 'closed'" 
                       @click="openManageModal(ticket)" 
                     />
+                    <q-btn
+                    v-if="Sviluppatore && ticket.stato !== 'closed'"
+                      label="Chiudi Ticket"
+                      color="negative"
+                      icon="cancel"
+                        @click="chiudiTicket(ticket.id)"
+                    />
                     <q-btn 
                       icon="chat" 
                       label="Apri Chat" 
@@ -84,7 +91,7 @@
             </q-tab-panel>
 
             <!-- Pannello Nuovo Ticket -->
-            <q-tab-panel v-if="!isAdmin" name="nuovo_ticket">
+            <q-tab-panel v-if="!isAdmin && !Sviluppatore" name="nuovo_ticket">
               <h2 class="text-h6">Crea Nuovo Ticket</h2>
               <q-card flat bordered>
                 <q-card-section>
@@ -105,7 +112,6 @@
             <q-card-section>
               <div class="text-h6">Gestisci Ticket: {{ selectedTicket?.titolo }}</div>
             </q-card-section>
-
             <q-card-section>
               <!-- Uso di statusOptions -->
               <q-select
@@ -115,7 +121,6 @@
                 filled
                 required
               />
-
               <!-- Descrizione Obbligatoria -->
               <q-input
                 v-if="selectedStatus === 'in_progress'"
@@ -125,13 +130,12 @@
                 required
                 :rules="[val => !!val || 'La descrizione è obbligatoria']"
               />
-
               <!-- Assegnato a Obbligatorio -->
               <q-select
                 v-if="selectedStatus === 'in_progress'"
                 v-model="assignedTo"
-                :options="adminUsers.map(admin => admin.id)"
-                :option-label="option => adminUsers.find(admin => admin.id === option)?.nome || ''"
+                :options="developerUsers.map(developer => developer.id)"
+                :option-label="option => developerUsers.find(developer => developer.id === option)?.nome || ''"
                 label="Assegnato a"
                 filled
                 required
@@ -168,6 +172,8 @@
   
   const user = ref<User | null>();
   const adminUsers = ref<User[]>([]); // Lista di utenti admin
+  const developerUsers = ref<User[]>([]); // Lista di utenti developer
+  const isAdmin = computed(() => user.value?.role === 'admin');
   const tickets = ref<Ticket[]>([]);
   const assignedTo = ref<number | null>(null); // Salva l'ID dell'utente selezionato
   const titolo = ref<string>('');
@@ -175,13 +181,44 @@
   const aggiornaDescrizione = ref <string>('');
   const router = useRouter();
   const currentTab = ref('tickets_aperti');
-  const ticketsAperti = computed(() =>
-  tickets.value.filter((ticket) => ticket.stato !== 'closed')
-);
+  const Sviluppatore = computed(() => user.value?.role === 'sviluppatore');
+  const customer= computed(() => user.value?.role === 'customer');
 
-const ticketsChiusi = computed(() =>
-  tickets.value.filter((ticket) => ticket.stato === 'closed')
-);
+  const ticketsAperti = computed(() => {
+  if (isAdmin.value) {
+    // Admin vede tutti i ticket aperti
+    return tickets.value.filter(ticket => ticket.stato !== 'closed');
+  } else if (Sviluppatore.value) {
+    // Sviluppatore vede solo i ticket assegnati a lui
+    return tickets.value.filter(
+      ticket => ticket.stato !== 'closed' && ticket.assignedTo?.id === user.value?.id
+    );
+  } else if (customer.value) {
+    // Cliente vede solo i ticket creati da lui
+    return tickets.value.filter(
+      ticket => ticket.stato !== 'closed' && ticket.user?.id === user.value?.id
+    );
+  }
+  return []; // Caso predefinito per sicurezza
+});
+
+const ticketsChiusi = computed(() => {
+  if (isAdmin.value) {
+    // Admin vede tutti i ticket chiusi
+    return tickets.value.filter(ticket => ticket.stato === 'closed');
+  } else if (Sviluppatore.value) {
+    // Sviluppatore vede solo i ticket chiusi a lui assegnati
+    return tickets.value.filter(
+      ticket => ticket.stato === 'closed' && ticket.assignedTo?.id === user.value?.id
+    );
+  } else if (customer.value) {
+    // Cliente vede solo i ticket chiusi creati da lui
+    return tickets.value.filter(
+      ticket => ticket.stato === 'closed' && ticket.user?.id === user.value?.id
+    );
+  }
+  return []; // Caso predefinito per sicurezza
+});
 const gestisciTicketAperto = ref(false);
 const selectedTicket = ref<Ticket | null>(null);
 const selectedStatus = ref('');
@@ -191,6 +228,26 @@ const statusOptions = [
   { label: 'In Progress', value: 'in_progress' },
   { label: 'Closed', value: 'closed' }
 ];
+const chiudiTicket = async (ticketId: number) => {
+  if (!selectedTicket.value) console.error('Nessun ticket selezionato'); // Assicurati che un ticket sia selezionato
+
+  try {
+    const token = localStorage.getItem('token');
+    await axios.put(
+      `http://localhost:3000/tickets/${ticketId}`,
+      { stato: 'closed' }, // Aggiorna lo stato
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    // Aggiorna la lista dei ticket
+    await fetchTickets(); 
+  } catch (error) {
+    console.error('Errore durante la chiusura del ticket:', error);
+  }
+};
 
 
 const openMessages = (ticketId: number) => {
@@ -213,11 +270,20 @@ const CatturaAdminUsers = async () => {
 };
 
 
-
-
-
-
-
+const CatturaDeveloperUsers = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.get('http://localhost:3000/user/sviluppatore', {
+      headers: {
+        Authorization: `Bearer ${token}`, // Aggiungi il token all'intestazione
+      },
+    });
+    developerUsers.value = response.data;
+    console.log('Utenti developer caricati:', developerUsers.value);
+  } catch (error) {
+    console.error('Errore durante il caricamento degli utenti admin:', error);
+  }
+};
 
 // Aprire la modale di gestione
 const openManageModal = (ticket: Ticket) => {
@@ -241,33 +307,24 @@ const aggiornaStatoTicket = async () => {
       alert('Assegnare un responsabile è obbligatorio per i ticket in lavorazione.');
       return;
     }
-    
     if (!aggiornaDescrizione.value) {
       alert('La descrizione è obbligatoria per i ticket in lavorazione.');
       return;
     }
-   
   }
   try {
     const token = localStorage.getItem('token'); // Recupera il token JWT
-  
-
-    console.log('test',{
+   console.log('test',{
   stato: selectedStatus.value,
   assignedTo: assignedTo.value, // Controlla esattamente cosa viene inviato
   aggiornaDescrizione: aggiornaDescrizione.value,
 });
-
   const response =  await axios.put(
       `http://localhost:3000/tickets/${selectedTicket.value.id}`,
-      
-      
       { 
         stato: selectedStatus.value,
-        assignedTo: assignedTo.value, // Invia l'ID al backend
-        
+        assignedTo: assignedTo.value, // Invia l'ID al backend 
        },
-       
       {
         headers: {
           Authorization: `Bearer ${token}`
@@ -286,8 +343,7 @@ const aggiornaStatoTicket = async () => {
             Authorization: `Bearer ${token}`,
           },
         }
-      );
-
+      )
       // Aggiorna i messaggi nella chat
       messaggi.value.push(response.data);
       aggiornaDescrizione.value = ''; // Resetta il campo di input
@@ -297,7 +353,6 @@ const aggiornaStatoTicket = async () => {
   assignedTo: assignedTo.value,
   descrizione: aggiornaDescrizione.value,
 });
-
     const updatedTicket = response.data;
 tickets.value = tickets.value.map(ticket =>
   ticket.id === updatedTicket.id
@@ -305,7 +360,6 @@ tickets.value = tickets.value.map(ticket =>
     : ticket
 );
 aggiornaDescrizione.value = '';
-
     closeManageModal();
   } catch (error) {
     console.error('Errore durante l\'aggiornamento dello stato:', error);
@@ -356,7 +410,7 @@ aggiornaDescrizione.value = '';
     }
   };
   
-  const isAdmin = computed(() => user.value?.role === 'admin');
+  
   
   const openNewTicket = async () => {
     try {
@@ -404,6 +458,7 @@ aggiornaDescrizione.value = '';
     await fetchUser();
     await fetchTickets();
     await CatturaAdminUsers();
+    await CatturaDeveloperUsers();
     
   });
   </script>

@@ -7,6 +7,7 @@ import {
   Request,
   UseGuards,
   Put,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { TicketService } from './ticket.service';
 import { Ticket } from './ticket.entity';
@@ -25,7 +26,11 @@ export class TicketController {
   @UseGuards(JwtAuthGuard)
   @Get()
   findAll(@Request() req): Promise<Ticket[]> {
+    const user = req.user;
     console.log('User in request:', req.user); // Controlla cosa arriva
+    if (!user || !['admin', 'sviluppatore', 'customer'].includes(user.role)) {
+      throw new UnauthorizedException('Accesso non autorizzato');
+    }
     return this.ticketService.findAll(req.user);
   }
 
