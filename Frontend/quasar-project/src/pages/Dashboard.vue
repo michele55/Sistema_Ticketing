@@ -17,23 +17,44 @@
           </q-tabs>
           <q-tab-panels v-model="currentTab" animated>
             <!-- Pannello Ticket Aperti -->
-            <q-tab-panel name="tickets_aperti">
+            <q-tab-panel  name="tickets_aperti">
+              <div class="row items-center justify-between q-mb-md">
               <h2 class="text-h6">Ticket Aperti</h2>
-              <q-list bordered padding>
-                <q-item v-for="ticket in ticketsAperti" :key="ticket.id">
+            <!-- Filtro per Stato -->
+            <q-select
+              v-model="selectedFilter"
+              :options="statusOptions2.map(option => option.value)"
+              label="Filtra per stato"
+              outlined
+              dense
+              clearable
+              class="filter-select"
+            />
+          </div>
+              <q-list v-if="(selectedFilter ? filteredTicketsAperti.length : ticketsAperti.length) > 0" bordered class="ticket-list" padding>
+                <q-item  v-for="ticket in (selectedFilter ? filteredTicketsAperti : ticketsAperti)" :key="ticket.id" class="ticket-item"  v-ripple>
                   <q-item-section>
-                    <q-item-label class="text-bold">Titolo: {{ ticket.titolo }}</q-item-label>
-                    <q-item-label>Descrizione: {{ ticket.descrizione }}</q-item-label>
+
                     <q-item-label>
-                      Stato:
+                      <span class="text-bold">Titolo:</span> {{ ticket.titolo }}
+                    </q-item-label>
+
+                    <q-item-label>
+                      <span class="text-bold">   Descrizione:</span> {{ ticket.descrizione }}</q-item-label>
+                    <q-item-label>
+                      <span class="text-bold">  Stato: </span>
                       <q-badge 
                         :color=" getTicketStatusColor(ticket.stato)" 
                         :label="ticket.stato.toUpperCase()" 
                       />
                     </q-item-label>
+                     <!-- Testo Centrale Assegnato A -->
+                <q-item-label v-if="ticket.stato === 'in_progress'">
+                  <span class="text-bold">  Assegnato a: </span> {{ticket.assignedTo?.nome}}</q-item-label>
                   </q-item-section>
-
+                  
                   <q-item-section side top>
+                    <div class="row items-center q-gutter-sm">
                     <!-- Bottone Apri dettagli (Cliente) -->
                     <q-btn 
                       icon="chat" 
@@ -66,16 +87,21 @@
                       v-if="isAdmin && ticket.stato !== 'closed'" 
                       @click="openMessages(ticket.id)" 
                     />
+                    </div>
                   </q-item-section>
                 </q-item>
               </q-list>
+              <div v-else class="q-pa-md text-center text-grey-7">
+              <q-icon name="info" size="md" class="q-mr-sm" />
+                 Nessun ticket aperto al momento.
+              </div>
             </q-tab-panel>
 
             <!-- Pannello Ticket Chiusi -->
             <q-tab-panel name="tickets_chiusi">
               <h2 class="text-h6">Ticket Chiusi</h2>
-              <q-list bordered padding>
-                <q-item v-for="ticket in ticketsChiusi" :key="ticket.id">
+              <q-list v-if="ticketsChiusi != null && ticketsChiusi.length > 0" bordered padding>
+                <q-item v-for="ticket in ticketsChiusi" :key="ticket.id"  class="ticket-item q-pa-md" clickable v-ripple>
                   <q-item-section>
                     <q-item-label class="text-bold">Titolo: {{ ticket.titolo }}</q-item-label>
                     <q-item-label>Descrizione: {{ ticket.descrizione }}</q-item-label>
@@ -86,6 +112,10 @@
                   </q-item-section>
                 </q-item>
               </q-list>
+              <div v-else class="q-pa-md text-center text-grey-7">
+              <q-icon name="info" size="md" class="q-mr-sm" />
+                 Nessun ticket chiuso al momento.
+              </div>
             </q-tab-panel>
 
             <!-- Pannello Nuovo Ticket -->
@@ -158,9 +188,6 @@
   </q-page>
 </template>
 
-
-
-  
   <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
@@ -171,7 +198,7 @@
   const user = ref<User | null>();
   const adminUsers = ref<User[]>([]); // Lista di utenti admin
   const developerUsers = ref<User[]>([]); // Lista di utenti developer
-  const isAdmin = computed(() => user.value?.role === 'admin');
+ 
   const tickets = ref<Ticket[]>([]);
   const assignedTo = ref<number | null>(null); // Salva l'ID dell'utente selezionato
   const titolo = ref<string>('');
@@ -179,8 +206,35 @@
   const aggiornaDescrizione = ref <string>('');
   const router = useRouter();
   const currentTab = ref('tickets_aperti');
+  const gestisciTicketAperto = ref(false);
+  const selectedTicket = ref<Ticket | null>(null);
+  const selectedStatus = ref('');
+  const messaggi = ref<{ id: number; descrizione: string; createdAt: string; inviatoDa: User }[]>([]);
+
+  const statusOptions = [
+  { label: 'Open', value: 'open' },
+  { label: 'In Progress', value: 'in_progress' },
+  { label: 'Closed', value: 'closed' }
+];
+
+const statusOptions2 = [
+  { label: 'Open', value: 'open' },
+  { label: 'In Progress', value: 'in_progress' }
+];
   const Sviluppatore = computed(() => user.value?.role === 'sviluppatore');
+  const isAdmin = computed(() => user.value?.role === 'admin');
   const customer= computed(() => user.value?.role === 'customer');
+
+  const selectedFilter = ref<string | null>(null);
+  const filteredTicketsAperti = computed(() => {
+  if (!selectedFilter.value) {
+    return tickets.value;
+  }
+  return tickets.value.filter(ticket => ticket.stato === selectedFilter.value);
+});
+
+
+
 
   function getTicketStatusColor(status: string): string {
   switch (status) {
@@ -231,15 +285,7 @@ const ticketsChiusi = computed(() => {
   }
   return []; // Caso predefinito per sicurezza
 });
-const gestisciTicketAperto = ref(false);
-const selectedTicket = ref<Ticket | null>(null);
-const selectedStatus = ref('');
-const messaggi = ref<{ id: number; descrizione: string; createdAt: string; inviatoDa: User }[]>([]);
-const statusOptions = [
-  { label: 'Open', value: 'open' },
-  { label: 'In Progress', value: 'in_progress' },
-  { label: 'Closed', value: 'closed' }
-];
+
 const chiudiTicket = async (ticketId: number) => {
   if (!selectedTicket.value) console.error('Nessun ticket selezionato'); // Assicurati che un ticket sia selezionato
 
@@ -476,23 +522,66 @@ aggiornaDescrizione.value = '';
   </script>
   
   <style scoped>
-  .dashboard-page {
-  padding-top: 60px; /* Imposta uno spazio sotto la barra azzurra */
+/* Sfondo generale */
+.q-page {
+  background: #f4f4f9;
+  padding: 20px;
+}
+
+/* Lista dei ticket */
+.ticket-list {
+  background: #c7e2e471;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+}
+
+/* Elementi dei ticket */
+.ticket-item {
+  background: #f9f9ff;         /* Sfondo distinto */
+  border: 1px solid #0295f7e1;   /* Linea di separazione */
+  margin-bottom: 8px;          /* Margine inferiore */
+  padding: 10px;
+  border-radius: 8px;          /* Angoli arrotondati */
+  transition: all 0.3s ease;   /* Animazione */
+}
+
+/* Rimozione della linea per l'ultimo elemento */
+.ticket-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Effetto Hover */
+.ticket-item:hover {
+  background: #a9bfe45b;
+  border-color: #16be32;
+  transform: translateY(-2px); /* Leggero sollevamento */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Testi migliorati */
+.text-primary {
+  color: #1976d2;
+}
+
+.text-info {
+  color: #0288d1;
 }
 
 .text-bold {
   font-weight: bold;
 }
 
-.text-h5 {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
+.q-badge {
+  font-size: 0.8rem;
 }
 
-.q-page {
-  background: #f4f4f9;
-  padding: 20px;
+.q-item-label {
+  font-size: 1rem;
 }
-  </style>
-  
+
+.filter-select {
+  width: 200px; /* Dimensione personalizzata */
+  margin-left: 20px; /* Distanza dal titolo */
+}
+</style>
