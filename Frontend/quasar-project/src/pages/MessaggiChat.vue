@@ -213,59 +213,93 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Miglioramenti Generali */
 .chat-page {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  height: 100vh;
+  background-color: #c7e2e471;
+  min-height: 100vh; /* Cambiato da height */
 }
 
 .chat-container {
+  border-color: aqua;
+  border-radius: 20px;
   display: flex;
   width: 100%;
   max-width: 1200px;
-  height: calc(100vh - 40px);
+  min-height: calc(100vh - 40px);
+  margin: 20px auto; /* Centratura migliorata */
   gap: 20px;
 }
 
+/* Stile Dettagli Utente */
 .user-details {
-  width: 300px;
+  border-radius: 15px;
+  border-color: #2196f3;
+  min-width: 280px;
+  max-width: 320px;
   padding: 20px;
   flex-shrink: 0;
 }
 
+.user-details h4 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* Stile della Chat */
 .chat-box {
+  border-radius: 15px;
+  border-color: #2196f3;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   padding: 20px;
-  border: 1px solid #ddd;
   border-radius: 8px;
-  background: #fff;
+  background: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Aggiunto */
 }
 
+/* Stile Messaggi */
 .messages {
+ 
   flex-grow: 1;
   overflow-y: auto;
   padding: 10px;
+  background: #f9f9f9; /* Aggiunto per separare l'area messaggi */
 }
 
+/* Input dei messaggi */
 .message-input {
   display: flex;
   gap: 10px;
+  margin-top: auto;
   align-items: center;
-  width: 100%; /* Aggiunto */
+  width: 100%; 
 }
 
 .q-input.full-width {
-  flex-grow: 1; /* Aggiunto per estensione completa */
+  flex-grow: 1; /* Estensione completa */
 }
 
+/* Stile Pulsante Invia */
+.message-input > q-btn {
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* Stile Etichette Testo */
 .text-bold {
   font-weight: bold;
 }
 
 .text-grey {
-  color: grey;
+  font-size: 16px;
+  color: #6c757d; /* Colore più leggibile */
 }
+
+/* Personalizzazione Avatar */
+q-avatar {
+  border: 2px solid #2196f3;
+}
+
 </style>

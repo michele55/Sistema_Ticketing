@@ -101,14 +101,37 @@
             <q-tab-panel name="tickets_chiusi">
               <h2 class="text-h6">Ticket Chiusi</h2>
               <q-list v-if="ticketsChiusi != null && ticketsChiusi.length > 0" bordered padding>
-                <q-item v-for="ticket in ticketsChiusi" :key="ticket.id"  class="ticket-item q-pa-md" clickable v-ripple>
+                <q-item v-for="ticket in ticketsChiusi" :key="ticket.id"  class="ticket-item q-pa-md"  v-ripple>
+               
                   <q-item-section>
+                
                     <q-item-label class="text-bold">Titolo: {{ ticket.titolo }}</q-item-label>
                     <q-item-label>Descrizione: {{ ticket.descrizione }}</q-item-label>
+                    <q-item-label>  Assegnato a: {{ ticket.assignedTo?.nome ? ticket.assignedTo.nome : "Non assegnato" }}</q-item-label>
+                    
                     <q-item-label>
                       Stato:
                       <q-badge color="grey" label="CHIUSO" />
                     </q-item-label>
+                    <q-item-label>
+          <q-badge color="primary" label="Mostra Info su utente che ha creato ticket" class="q-ml-sm">
+            <q-tooltip
+              @show="fetchAssignedUser(ticket.id)"  
+              transition-show="fade"
+              transition-hide="fade"
+              class="tooltip-custom"
+            >
+              <div v-if="assignedUser">
+                <p><b>Nome:</b> {{ assignedUser?.nome || "Non assegnato" }}</p>
+                <p><b>Email:</b> {{ assignedUser?.email || "Non disponibile" }}</p>
+               
+              </div>
+              <div v-else>
+                Caricamento...
+              </div>
+            </q-tooltip>
+          </q-badge>
+        </q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -194,6 +217,7 @@
   import axios from 'axios';
   import { User } from 'src/model/User';
   import { Ticket } from 'src/model/Ticket';
+ 
   
   const user = ref<User | null>();
   const adminUsers = ref<User[]>([]); // Lista di utenti admin
@@ -210,6 +234,7 @@
   const selectedTicket = ref<Ticket | null>(null);
   const selectedStatus = ref('');
   const messaggi = ref<{ id: number; descrizione: string; createdAt: string; inviatoDa: User }[]>([]);
+ 
 
   const statusOptions = [
   { label: 'Open', value: 'open' },
@@ -424,7 +449,7 @@ aggiornaDescrizione.value = '';
   }
 };
 
-  
+  //recupera utente
   const fetchUser = async () => {
     try {
       const token = localStorage.getItem('token'); // Cambiato 'jwt_token' a 'token'
@@ -469,7 +494,8 @@ aggiornaDescrizione.value = '';
   };
   
   
-  
+ 
+  //funzionalità che apre nuovo ticket
   const openNewTicket = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -511,10 +537,33 @@ aggiornaDescrizione.value = '';
     }
   };
   
+  const assignedUser = ref<User | null>(null);
+
+async function fetchAssignedUser(ticketId: number) {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token || !ticketId) {
+      console.error('Token JWT o ID Ticket mancanti!');
+      return;
+    }
+
+    const response = await axios.get(`http://localhost:3000/tickets/${ticketId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    // Assegna l'intero oggetto utente
+    assignedUser.value = response.data.user;
+
+    console.log("Dati dell'utente assegnato:", assignedUser.value);
+  } catch (error) {
+    console.error("Errore durante il recupero dell'utente assegnato:", error);
+  }
+}
   
   onMounted(async () => {
     await fetchUser();
     await fetchTickets();
+  
     await CatturaAdminUsers();
     await CatturaDeveloperUsers();
     
@@ -583,5 +632,10 @@ aggiornaDescrizione.value = '';
 .filter-select {
   width: 200px; /* Dimensione personalizzata */
   margin-left: 20px; /* Distanza dal titolo */
+}
+.tooltip-custom {
+  font-size: 80px;   /* Dimensione del testo */
+  font-weight: lighter; /* Testo in grassetto */
+  line-height: 1;  /* Spaziatura tra righe */
 }
 </style>
