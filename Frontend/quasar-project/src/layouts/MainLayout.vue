@@ -2,37 +2,32 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
+      
+        <q-toolbar-title>Sistema di Gestione Ticket</q-toolbar-title>
+
+        <!-- Bottone Dashboard Visibile Solo se Autenticato -->
         <q-btn
+          v-if="isAuthenticated"
           flat
           dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
+          icon="home"
+          label="Dashboard"
+          class="q-ml-md"
+          @click="navigateToDashboard"
         />
 
-        <q-toolbar-title>
-          Sistema di Gestione ticket
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
-      </q-toolbar>
-    </q-header>
-     <!-- Drawer (Menu Laterale) -->
-     <q-drawer v-model="leftDrawerOpen">
-      <q-list>
-        <!-- Pulsante Logout -->
-        <q-item clickable v-ripple @click="logout">
-          <q-btn
+        <!-- Bottone di Logout -->
+        <q-btn
+          v-if="isAuthenticated"
           flat
           dense
           icon="logout"
           label="Logout"
-          to="/"
+          class="q-ml-md"
+          @click="logout"
         />
-        </q-item>
-      </q-list>
-    </q-drawer>
+      </q-toolbar>
+    </q-header>
 
     <q-page-container>
       <router-view />
@@ -40,26 +35,50 @@
   </q-layout>
 </template>
 
+
+
+
+
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
+const isAuthenticated = ref(false);
 
+// Funzione per Verificare il Token JWT
+function checkAuth() {
+  const token = localStorage.getItem('token');
+  if (!token) return false;
 
-defineOptions({
-  name: 'MainLayout'
-});
-
-
-
-const leftDrawerOpen = ref(false);
-
-function logout() {
-  // Rimuovi il token dal localStorage
-  localStorage.removeItem('token');
- 
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp * 1000 > Date.now(); // Verifica la scadenza
+  } catch (error) {
+    console.error('Token non valido:', error);
+    return false;
+  }
 }
 
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
+// Controllo Automatico all'Avvio
+onMounted(() => {
+  isAuthenticated.value = checkAuth(); 
+});
+
+// Funzione di Logout
+function logout() {
+  localStorage.removeItem('token');
+  isAuthenticated.value = false; // Aggiorna lo stato
+  router.push('/'); // Torna alla pagina di login
+}
+
+// Navigazione alla Dashboard
+function navigateToDashboard() {
+  if (isAuthenticated.value) {
+    router.push('/dashboard');
+  } else {
+    alert('Sessione scaduta! Effettua nuovamente il login.');
+    router.push('/');
+  }
 }
 </script>
