@@ -1,6 +1,6 @@
 <template>
-    <q-page class="flex flex-center">
-      <q-card style="width: 400px">
+    <q-page  :style="backgroundStyle" class="login-page">
+      <q-card style="width: 400px" class="login-card">
         <q-card-section>
           <div class="text-h6">Login</div>
           <q-form @submit="onLogin">
@@ -36,7 +36,8 @@
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
   import axios from 'axios';
-  
+
+import minimalist_background_no_elements from 'src/assets/minimalist_background_no_elements.jpeg'
   interface FormData {
     email: string;
     password: string;
@@ -92,4 +93,29 @@
   };
   
 
+  const backgroundStyle = {
+  backgroundImage: `url(${minimalist_background_no_elements})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  height: '90vh',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+};
   </script>
+
+  <style scoped>
+
+
+
+.login-card {
+  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.8); /* Sfondo semitrasparente */
+  border-radius: 12px;
+  margin-left: 75px;
+}
+
+
+
+
+</style>
