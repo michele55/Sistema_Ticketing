@@ -59,6 +59,7 @@ export class TicketService {
     stato: string,
     assignedTo?: number,
     descrizione?: string,
+    motivazioneChiusura?: string,
   ): Promise<Ticket> {
     // Trova il ticket da aggiornare
     const ticket = await this.ticketRepository.findOne({
@@ -96,6 +97,10 @@ export class TicketService {
     if (descrizione) {
       ticket.descrizione = descrizione; // Aggiorna la descrizione
       console.log('Descrizione nuova dopo aggiornamento:', ticket.descrizione);
+    }
+    if (motivazioneChiusura) {
+      ticket.motivazioneChiusura = motivazioneChiusura; // Aggiorna la descrizione
+      console.log('Motivazione chiusura:', ticket.motivazioneChiusura);
     }
     // Salva le modifiche
     return this.ticketRepository.save(ticket);

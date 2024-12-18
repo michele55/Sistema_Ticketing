@@ -23,8 +23,7 @@ import { Repository } from 'typeorm';
       password: 'Formula12.',
       database: 'ticketing_db',
       entities: [User, Ticket, Messaggio], // Percorso delle entità
-      synchronize: true, // Disabilita sincronizzazione automatica
-      logging: true, // Mostra le query SQL
+      synchronize: false, // Disabilita sincronizzazione automatica
     }),
     UserModule,
     MessaggioModule,

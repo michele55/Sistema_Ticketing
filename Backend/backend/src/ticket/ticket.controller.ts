@@ -20,7 +20,7 @@ export class TicketController {
 
   @Post()
   create(@Body() ticketData: CreateTicketDto): Promise<Ticket> {
-    console.log('Dati ricevuti nel DTO:', ticketData);
+    console.log('Dati ricevuti nel DTO:', ticketData.motivazioneChiusura);
     return this.ticketService.create(ticketData);
   }
   @UseGuards(JwtAuthGuard)
@@ -42,14 +42,20 @@ export class TicketController {
   async aggiornaStato(
     @Param('id') id: number,
     @Body()
-    updateData: { stato: string; assignedTo?: number; descrizione?: string },
+    updateData: {
+      stato: string;
+      assignedTo?: number;
+      descrizione?: string;
+      motivazioneChiusura?: string;
+    },
   ): Promise<Ticket> {
-    console.log('Dati ricevuti nel controller2:', updateData.assignedTo);
+    console.log('Dati ricevuti nel cont2:', updateData.motivazioneChiusura);
     return this.ticketService.aggiornaStato(
       id,
       updateData.stato,
       updateData.assignedTo,
       updateData.descrizione,
+      updateData.motivazioneChiusura,
     );
   }
 }

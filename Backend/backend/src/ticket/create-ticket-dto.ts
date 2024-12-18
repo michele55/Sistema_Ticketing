@@ -9,4 +9,5 @@ export class CreateTicketDto {
   assignedTo: User;
   createdAt: Date;
   closedAt: Date;
+  motivazioneChiusura: string;
 }

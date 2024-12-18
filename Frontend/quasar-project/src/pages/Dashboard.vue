@@ -64,7 +64,7 @@
                       @click="openMessages(ticket.id)" 
                     />
                     
-                    <!-- Bottone Gestisci (Admin) -->
+                    <!-- Bottone Gestisci (Admin e sviluppatore) -->
                     <q-btn 
                       icon="manage_accounts" 
                       label="Gestisci" 
@@ -77,7 +77,7 @@
                       label="Chiudi Ticket"
                       color="negative"
                       icon="cancel"
-                        @click="chiudiTicket(ticket.id)"
+                        @click="openManageModalDev(ticket)"
                     />
                     <q-btn 
                       icon="chat" 
@@ -156,6 +156,30 @@
             </q-tab-panel>
           </q-tab-panels>
         </template>
+        <!-- Modale Gestione Ticket Developer -->
+        <q-dialog v-model="gestisciTicketApertoDev">
+        <q-card style="min-width: 400px">
+            <q-card-section>
+              <div class="text-h6">Chiudi Ticket: {{ selectedTicket?.titolo }}</div>
+            </q-card-section>
+            <q-card-section>
+              <q-input
+                v-model="motivazioneChiusura"
+                label="Indica le motivazioni della chiusura"
+                filled
+                required
+                :rules="[val => !!val || 'Le motivazioni sono obbligatorie']"
+              />
+
+            </q-card-section>
+
+            <q-card-actions align="right">
+              <q-btn flat label="Chiudi" color="primary" @click="closeManageModalDev" />
+              <q-btn label="Salva" color="positive" @click="chiudiTicket" />
+            </q-card-actions>
+            </q-card>
+            </q-dialog>
+
 
         <!-- Modale Gestione Ticket -->
         <q-dialog v-model="gestisciTicketAperto">
@@ -180,6 +204,14 @@
                 filled
                 required
                 :rules="[val => !!val || 'La descrizione è obbligatoria']"
+              />
+              <q-input
+                v-if="selectedStatus === 'closed'"
+                v-model="motivazioneChiusura"
+                label="Indica le motivazioni della chiusura"
+                filled
+                required
+                :rules="[val => !!val || 'Le motivazioni sono obbligatorie']"
               />
               <!-- Assegnato a Obbligatorio -->
               <q-select
@@ -228,9 +260,11 @@
   const titolo = ref<string>('');
   const descrizione = ref<string>('');
   const aggiornaDescrizione = ref <string>('');
+  const motivazioneChiusura = ref<string>('');
   const router = useRouter();
   const currentTab = ref('tickets_aperti');
   const gestisciTicketAperto = ref(false);
+  const gestisciTicketApertoDev = ref(false);
   const selectedTicket = ref<Ticket | null>(null);
   const selectedStatus = ref('');
   const messaggi = ref<{ id: number; descrizione: string; createdAt: string; inviatoDa: User }[]>([]);
@@ -311,14 +345,16 @@ const ticketsChiusi = computed(() => {
   return []; // Caso predefinito per sicurezza
 });
 
-const chiudiTicket = async (ticketId: number) => {
+const chiudiTicket = async () => {
   if (!selectedTicket.value) console.error('Nessun ticket selezionato'); // Assicurati che un ticket sia selezionato
 
   try {
     const token = localStorage.getItem('token');
     await axios.put(
-      `http://localhost:3000/tickets/${ticketId}`,
-      { stato: 'closed' }, // Aggiorna lo stato
+      `http://localhost:3000/tickets/${selectedTicket.value?.id}`,
+      { stato: 'closed',
+      motivazioneChiusura: motivazioneChiusura.value,
+       }, // Aggiorna lo stato
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -367,6 +403,29 @@ const CatturaDeveloperUsers = async () => {
     console.error('Errore durante il caricamento degli utenti admin:', error);
   }
 };
+// Aprire la modale di gestione Developer
+const openManageModalDev = (ticket: Ticket) => {
+  selectedTicket.value = ticket;
+  selectedStatus.value = ticket.stato; // Stato attuale del ticket
+ gestisciTicketApertoDev.value = true;
+};
+
+// Chiudere la modale Developer
+const closeManageModalDev = () => {
+  gestisciTicketApertoDev.value = false;
+  selectedTicket.value = null;
+  selectedStatus.value = '';
+};
+
+
+
+
+
+
+
+
+
+
 
 // Aprire la modale di gestione
 const openManageModal = (ticket: Ticket) => {
@@ -395,18 +454,28 @@ const aggiornaStatoTicket = async () => {
       return;
     }
   }
+
+  if(selectedStatus.value === 'closed'){
+    if(!motivazioneChiusura.value){
+      alert('Le motivazioni sono obbligatorie per i ticket chiusi.');
+      return;
+    }
+  }
+
   try {
     const token = localStorage.getItem('token'); // Recupera il token JWT
    console.log('test',{
   stato: selectedStatus.value,
   assignedTo: assignedTo.value, // Controlla esattamente cosa viene inviato
   aggiornaDescrizione: aggiornaDescrizione.value,
+  motivazioneChiusura: motivazioneChiusura.value,
 });
   const response =  await axios.put(
       `http://localhost:3000/tickets/${selectedTicket.value.id}`,
       { 
         stato: selectedStatus.value,
         assignedTo: assignedTo.value, // Invia l'ID al backend 
+        motivazioneChiusura: motivazioneChiusura.value,
        },
       {
         headers: {

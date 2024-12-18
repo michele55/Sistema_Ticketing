@@ -41,6 +41,9 @@ export class Ticket {
   @Column({ nullable: true })
   closedAt: Date;
 
+  @Column('text', { nullable: true })
+  motivazioneChiusura: string;
+
   @OneToMany(() => Messaggio, (messaggio) => messaggio.ticket)
   messaggi: Messaggio[];
 }
