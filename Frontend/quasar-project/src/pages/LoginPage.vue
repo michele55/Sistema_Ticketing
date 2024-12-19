@@ -7,6 +7,7 @@
             <q-input
               v-model="form.email"
               label="Email"
+              name="Email"
               type="email"
               outlined
               :rules="[val => !!val || 'Email required']"
@@ -15,6 +16,7 @@
               v-model="form.password"
               label="Password"
               type="password"
+              name="Password"
               outlined
               :rules="[val => !!val || 'Password required']"
             />

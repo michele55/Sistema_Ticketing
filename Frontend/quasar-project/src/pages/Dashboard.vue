@@ -15,7 +15,7 @@
             <q-tab name="tickets_chiusi" icon="archive" label="Ticket Chiusi" />
             <q-tab v-if="!isAdmin && !Sviluppatore" name="nuovo_ticket" icon="add" label="Nuovo Ticket" />
           </q-tabs>
-          <q-tab-panels v-model="currentTab" animated>
+          <q-tab-panels name= "tick_aperti" v-model="currentTab" animated>
             <!-- Pannello Ticket Aperti -->
             <q-tab-panel  name="tickets_aperti">
               <div class="row items-center justify-between q-mb-md">
@@ -31,7 +31,7 @@
               class="filter-select"
             />
           </div>
-              <q-list v-if="(selectedFilter ? filteredTicketsAperti.length : ticketsAperti.length) > 0" bordered class="ticket-list" padding>
+              <q-list name="tick_aperti" v-if="(selectedFilter ? filteredTicketsAperti.length : ticketsAperti.length) > 0" bordered class="ticket-list" padding>
                 <q-item  v-for="ticket in (selectedFilter ? filteredTicketsAperti : ticketsAperti)" :key="ticket.id" class="ticket-item"  v-ripple>
                   <q-item-section>
 
@@ -249,6 +249,7 @@
   import axios from 'axios';
   import { User } from 'src/model/User';
   import { Ticket } from 'src/model/Ticket';
+import { Notify } from 'quasar';
  
   
   const user = ref<User | null>();
@@ -596,8 +597,17 @@ aggiornaDescrizione.value = '';
         customerId: user.value.id,
       });
       // Messaggio di conferma
-      alert('Ticket creato con successo!');
-  
+    Notify.create({
+  type: 'positive',              // Verde per messaggi di successo
+  message: 'Ticket creato con successo!',
+  position: 'top-right',         // Posizioni: top, top-right, top-left, bottom-right, bottom-left, bottom
+  timeout: 3000,                 // Durata in millisecondi (3 secondi)
+  icon: 'check_circle'           // Icona opzionale (Material Icons)
+})
+      //alert('Ticket creato con successo!');
+      titolo.value = ''; // Resetta il campo del titolo
+      descrizione.value = ''; // Resetta il campo della descrizione
+      currentTab.value = 'tickets_aperti'; // Cambia la scheda attiva
       // Aggiorna la lista dei ticket per mostrare il nuovo ticket
       await fetchTickets();
     } catch (error) {
