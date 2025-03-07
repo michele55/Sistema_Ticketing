@@ -20,7 +20,7 @@ import { Repository } from 'typeorm';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'Formula12.',
+      password: 'accesso',
       database: 'ticketing_db',
       entities: [User, Ticket, Messaggio], // Percorso delle entità
       synchronize: false, // Disabilita sincronizzazione automatica
