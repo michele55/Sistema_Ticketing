@@ -58,7 +58,7 @@ export class AppModule implements OnApplicationBootstrap {
           nome: 'Admin',
           email: 'admin@example.com',
           password:
-            '$2a$12$yLR1Ra1oLYiYEuRTYsWZd.qpnBHm6N6I5oGyMv.t6Ax3bT4W2ZClW', // Ricorda di hasharlo in produzione
+            '$2a$12$yLR1Ra1oLYiYEuRTYsWZd.qpnBHm6N6I5oGyMv.t6Ax3bT4W2ZClW',
           role: 'admin',
         });
         await this.userRepository.save(adminUser);
@@ -68,7 +68,7 @@ export class AppModule implements OnApplicationBootstrap {
           nome: 'Developer',
           email: 'developer@example.com',
           password:
-            '$2a$12$yLR1Ra1oLYiYEuRTYsWZd.qpnBHm6N6I5oGyMv.t6Ax3bT4W2ZClW', // Ricorda di hasharlo in produzione
+            '$2a$12$yLR1Ra1oLYiYEuRTYsWZd.qpnBHm6N6I5oGyMv.t6Ax3bT4W2ZClW',
           role: 'sviluppatore',
         });
         await this.userRepository.save(DeveloperUser);
