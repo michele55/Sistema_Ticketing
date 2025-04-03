@@ -147,9 +147,9 @@
               <q-card flat bordered>
                 <q-card-section>
                   <q-form @submit="openNewTicket">
-                    <q-input v-model="titolo" label="Titolo" filled required />
-                    <q-input v-model="descrizione" label="Descrizione" type="textarea" filled required />
-                    <q-btn label="Invia" color="primary" type="submit" class="q-mt-md" />
+                    <q-input v-model="titolo" label="Titolo" filled required data-cy="input-titolo"/>
+                    <q-input v-model="descrizione" label="Descrizione" type="textarea" filled required  data-cy="input-descrizione"/>
+                    <q-btn label="Invia" color="primary" type="submit" class="q-mt-md" data-cy="btn-invia"/>
                   </q-form>
                 </q-card-section>
               </q-card>
