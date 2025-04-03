@@ -16,4 +16,14 @@ describe('Login Test', () => {
     // 5. Controlla che il nome utente o un elemento specifico sia visibile
     cy.contains('Benvenuto, Admin'); 
   });
+
+  it('Mostra errore con credenziali non valide', () => {
+    cy.visit('http://localhost:9000/#/');
+    cy.get('input[name="Email"]').type('admin@example.com');
+    cy.get('input[name="Password"]').type('passwordSbagliata');
+    cy.get('button[type="submit"]').click();
+    cy.on('window:alert', (text) => {
+      expect(text).to.contains('Credenziali errate');
+    });
+  });
 });
