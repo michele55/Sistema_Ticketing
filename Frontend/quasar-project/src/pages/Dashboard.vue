@@ -69,6 +69,7 @@
                       icon="manage_accounts" 
                       label="Gestisci" 
                       color="primary" 
+                      data-cy="btn-gestisci"
                       v-if="isAdmin && ticket.stato !== 'closed'" 
                       @click="openManageModal(ticket)" 
                     />
@@ -193,6 +194,7 @@
                 v-model="selectedStatus"
                 :options="statusOptions.map(option => option.value)"
                 label="Cambia Stato"
+                data-cy="select-stato"
                 filled
                 required
               />
@@ -201,6 +203,7 @@
                 v-if="selectedStatus === 'in_progress'"
                 v-model="aggiornaDescrizione"
                 label="Descrizione"
+                data-cy="input-descrizione"
                 filled
                 required
                 :rules="[val => !!val || 'La descrizione è obbligatoria']"
@@ -220,6 +223,7 @@
                 :options="developerUsers.map(developer => developer.id)"
                 :option-label="option => developerUsers.find(developer => developer.id === option)?.nome || ''"
                 label="Assegnato a"
+                data-cy="select-sviluppatore"
                 filled
                 required
                 :rules="[val => !!val || 'Assegnare un responsabile è obbligatorio']"
@@ -228,7 +232,7 @@
 
             <q-card-actions align="right">
               <q-btn flat label="Chiudi" color="primary" @click="closeManageModal" />
-              <q-btn label="Salva" color="positive" @click="aggiornaStatoTicket" />
+              <q-btn label="Salva" color="positive" @click="aggiornaStatoTicket" data-cy="btn-salva-stato" />
             </q-card-actions>
           </q-card>
         </q-dialog>
