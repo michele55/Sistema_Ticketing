@@ -516,10 +516,24 @@ tickets.value = tickets.value.map(ticket =>
     ? updatedTicket
     : ticket
 );
+Notify.create({
+      type: 'positive',
+      message: 'Ticket aggiornato con successo!',
+      position: 'top-right',
+      timeout: 3000,
+      icon: 'check_circle'
+    });
 aggiornaDescrizione.value = '';
     closeManageModal();
   } catch (error) {
     console.error('Errore durante l\'aggiornamento dello stato:', error);
+    Notify.create({
+      type: 'negative',
+      message: 'Errore durante l\'aggiornamento del ticket',
+      position: 'top-right',
+      timeout: 3000,
+      icon: 'error'
+    });
   }
 };
 

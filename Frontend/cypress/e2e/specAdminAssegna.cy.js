@@ -41,23 +41,33 @@ const titoloTicket = `Titolo: Ticket Cypress ${timestamp}`;
   cy.get('[data-cy="select-stato"]').click();
   cy.contains('.q-item', 'in_progress').click();
   
-  // Inserisci descrizione
-  cy.get('[data-cy="input-descrizione"]').type('Assegnazione test Cypress');
+  cy.get('[data-cy="select-sviluppatore"]')
+  .scrollIntoView()
+  .click({ force: true });
 
+cy.get('.q-menu', { timeout: 4000 }).should('exist');
 
+cy.get('.q-menu .q-item__label span')
+  .contains('Developer')
+  .scrollIntoView()
+  .click({ force: true });
+
+// 7. Inserisci descrizione
+cy.get('[data-cy="input-descrizione"]').type('Assegnazione da test automatico');
+
+// 8. Clicca su "Salva"
+cy.get('[data-cy="btn-salva-stato"]').click();
 
   // Seleziona sviluppatore (es: con ID 2)
-  cy.get('[data-cy="select-sviluppatore"]').scrollIntoView().click({ force: true });
-  cy.contains('.q-item', 'Developer').click(); // oppure il nome dello sviluppatore
   
-  // Salva
-  cy.get('[data-cy="btn-salva-stato"]').click();
   
   // Verifica notifica
-  cy.get('.q-notification').should('contain', 'Ticket aggiornato con successo');
+  cy.get('.q-notification').should('contain', 'Ticket aggiornato con successo!');
   
   // Verifica che il ticket sia in stato aggiornato
-  cy.contains(titoloTicket).parent().should('contain', 'in_progress');
+  cy.contains(titoloTicket)
+  .parents('.ticket-item') // risali fino al contenitore completo del ticket
+  .should('contain.text', 'IN_PROGRESS');
   
     });
   });
