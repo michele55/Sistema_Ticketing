@@ -1,19 +1,22 @@
 describe('Protezione delle rotte - accesso non autenticato', () => {
     it('Reindirizza alla pagina di login se si accede a /dashboard senza login', () => {
-      cy.clearLocalStorage(); // Rimuove eventuali token
+      cy.clearLocalStorage(); // Elimina eventuali token
       cy.visit('http://localhost:9000/#/dashboard');
   
-      // Verifica che l'utente venga reindirizzato alla pagina di login
-      cy.url().should('include', '/#/'); // login è la root
-      cy.contains('Accedi').should('be.visible'); // o qualsiasi testo presente nel login
+      // Verifica che il reindirizzamento avvenga a /login
+      cy.location('hash', { timeout: 5000 }).should('eq', '#/login');
+  
+      // Verifica che un contenuto della login sia visibile
+      cy.contains('Login').should('be.visible');
     });
   
-    it('Reindirizza alla login se si accede a una pagina chat senza login', () => {
+    it('Reindirizza alla pagina di login se si accede a una chat senza login', () => {
       cy.clearLocalStorage();
-      cy.visit('http://localhost:9000/#/chat/1'); // ID fittizio, serve solo il controllo della guardia
+      cy.visit('http://localhost:9000/#/chat/1'); // ID fittizio, serve solo per testare la guardia
   
-      cy.url().should('include', '/#/'); // Reindirizzato
-      cy.contains('Accedi').should('be.visible');
+      cy.location('hash', { timeout: 5000 }).should('eq', '#/login');
+  
+      cy.contains('Login').should('be.visible');
     });
   });
   

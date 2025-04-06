@@ -3,13 +3,16 @@ import { RouteRecordRaw } from 'vue-router';
 const routes: RouteRecordRaw[] = [
   // Layout dedicato alla Pagina di Login
   {
-    path: '/',
+    path: '/login',
     component: () => import('layouts/MainLayout2.vue'), // Layout per il login
     children: [
       { path: '', component: () => import('pages/LoginPage.vue') },
     ],
   },
-
+  {
+    path: '/',
+    redirect: '/login',
+  },
   // Layout dedicato alle Pagine Autenticate
   {
     path: '/',
