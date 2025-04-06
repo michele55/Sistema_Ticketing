@@ -56,6 +56,7 @@
           <q-chat-message
             v-for="messaggio in messaggi"
             :key="messaggio.id"
+             data-cy="chat-msg"
             :text="[messaggio.descrizione]"
             :sent="messaggio.inviatoDa.id === currentUserId"
             :name="messaggio.inviatoDa.id === currentUserId ? 'Tu' : messaggio.inviatoDa.nome"
@@ -74,6 +75,7 @@
         <q-input
           v-model="newMessage"
           placeholder="Scrivi un messaggio..."
+           data-cy="chat-input"
           outlined
           dense
           class="full-width"

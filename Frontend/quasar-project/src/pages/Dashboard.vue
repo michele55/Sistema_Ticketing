@@ -160,6 +160,7 @@
         <!-- Modale Gestione Ticket Developer -->
         <q-dialog v-model="gestisciTicketApertoDev">
         <q-card style="min-width: 400px">
+          <q-form @submit.prevent="chiudiTicket">
             <q-card-section>
               <div class="text-h6">Chiudi Ticket: {{ selectedTicket?.titolo }}</div>
             </q-card-section>
@@ -176,8 +177,9 @@
 
             <q-card-actions align="right">
               <q-btn flat label="Chiudi" color="primary" @click="closeManageModalDev" />
-              <q-btn label="Salva" color="positive" @click="chiudiTicket" />
+              <q-btn label="Salva" color="positive" type="submit" />
             </q-card-actions>
+          </q-form>>
             </q-card>
             </q-dialog>
 
@@ -368,8 +370,23 @@ const chiudiTicket = async () => {
     );
     // Aggiorna la lista dei ticket
     await fetchTickets(); 
+    Notify.create({
+      type: 'positive',
+      message: 'Ticket chiuso con successo!',
+      position: 'top-right',
+      icon: 'check_circle',
+      timeout: 3000,
+    });
+    gestisciTicketApertoDev.value = false;
   } catch (error) {
     console.error('Errore durante la chiusura del ticket:', error);
+    Notify.create({
+      type: 'negative',
+      message: 'Errore durante la chiusura del ticket',
+      position: 'top-right',
+      icon: 'error',
+      timeout: 3000,
+    });
   }
 };
 
