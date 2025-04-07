@@ -115,6 +115,15 @@
                       <q-badge color="grey" label="CHIUSO" />
                     </q-item-label>
                     <q-item-label>
+                      <q-item-label>
+  <q-btn
+    label="Visualizza chat"
+    color="primary"
+    flat
+    dense
+    @click="vaiAllaChat(ticket.id)"
+  />
+</q-item-label>
           <q-badge color="primary" label="Mostra Info su utente che ha creato ticket" class="q-ml-sm">
             <q-tooltip
               @show="fetchAssignedUser(ticket.id)"  
@@ -314,7 +323,9 @@ const statusOptions2 = [
       return 'blue';
   }
 }
-
+function vaiAllaChat(ticketId: number) {
+  router.push(`/chat/${ticketId}`);
+}
 
   const ticketsAperti = computed(() => {
   if (isAdmin.value) {

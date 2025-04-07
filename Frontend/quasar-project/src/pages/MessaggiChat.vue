@@ -2,7 +2,7 @@
   <q-page class="q-pa-md chat-page">
     <div class="chat-container">
       <!-- Riquadro a Sinistra: Dati Utente -->
-      <q-card class="user-details" flat bordered>
+      <q-card class="user-details" flat bordered v-if="!ticketNonTrovato">
         <q-card-section>
           <h4>Dati Utente che ha creato il ticket</h4>
           <q-item>
@@ -47,12 +47,38 @@
       </q-card>
 
       <!-- Riquadro a Destra: Chat -->
-      <q-card class="chat-box" flat bordered>
+ 
+      <!-- Banner di errore se ticket non trovato -->
+      <div v-if="ticketNonTrovato" class="column items-center justify-center full-height">
+  <q-banner
+    class="bg-red text-white text-subtitle2 q-pa-md"
+    style="border-radius: 8px; max-width: 500px; text-align: center;"
+  >
+    <div class="row items-center justify-between">
+      <div>
+        ❌ Il ticket richiesto non esiste o non è accessibile.
+        <div class="text-caption q-mt-xs">
+          Redirect automatico tra {{ countdown }} secondo{{ countdown === 1 ? '' : 'i' }}...
+        </div>
+      </div>
+      <q-spinner color="white" size="20px" />
+    </div>
+  </q-banner>
+</div>
+
+
+      <q-card v-if="!ticketNonTrovato" class="chat-box" flat bordered>
         <q-card-section>
           <h3>Chat</h3>
         </q-card-section>
 
         <q-card-section class="messages" v-if="messaggi.length">
+          <q-banner
+  v-if="ticketStatus === 'closed'"
+  class="bg-red text-white q-mb-md"
+>
+  🔒 Questo ticket è stato chiuso. La conversazione è in sola lettura.
+</q-banner>
           <q-chat-message
             v-for="messaggio in messaggi"
             :key="messaggio.id"
@@ -79,6 +105,7 @@
           outlined
           dense
           class="full-width"
+           :disable="ticketStatus === 'closed'"
           @keyup.enter="sendMessage"
         />
           <q-btn
@@ -86,7 +113,7 @@
             color="primary"
             dense
             @click="sendMessage"
-            :disable="!newMessage.trim()"
+             :disable="ticketStatus === 'closed' || !newMessage.trim()"
           />
         </q-card-section>
       </q-card>
@@ -97,9 +124,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import { useRoute } from 'vue-router';
+import { useRoute,useRouter } from 'vue-router';
 import { User } from 'src/model/User';
 
+const router = useRouter();
 const route = useRoute();
 const ticketId = route.params.ticketId;
 const ticketStatus = ref<string>('');
@@ -109,7 +137,7 @@ const currentUser = ref<User | null>(null);
    const  ticketOwner = ref<User | null>(null);
 const messaggi = ref<{ id: number; descrizione: string; createdAt: string; inviatoDa: User }[]>([]);
 const newMessage = ref<string>('');
-
+  
 // Stato Messaggi
 
 function getTicketStatusColor(status: string): string {
@@ -135,16 +163,35 @@ function getTicketStatusColor(status: string): string {
 }*/
 // Recupera i dati utente dal token JWT
 // Recupera i dati del creatore del ticket usando findOne
+const ticketNonTrovato = ref(false);
+const countdown = ref(3);
 async function fetchTicketOwner() {
   try {
     const token = localStorage.getItem('token');
     const response = await axios.get(`http://localhost:3000/tickets/${ticketId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    if (!response.data || !response.data.user) {
+      console.warn('⚠️ Ticket vuoto o non trovato nei dati');
+      ticketNonTrovato.value = true;
+
+      const interval = setInterval(() => {
+  countdown.value--;
+
+  if (countdown.value === 0) {
+    clearInterval(interval);
+    console.log('➡️ Redirecting to /dashboard...');
+    router.push('/dashboard');
+  }
+}, 1000); // ogni secondo
+      return;
+    }
     ticketOwner.value = response.data.user;
     ticketStatus.value = response.data.stato;
   } catch (error) {
-    console.error('Errore durante il recupero dei dati del creatore del ticket:', error);
+    console.error('Ticket non trovato:', error);
+    ticketNonTrovato.value = true;
+  
   }
 }
 
@@ -182,6 +229,11 @@ async function fetchMessages() {
 
 // Invia un nuovo messaggio
 async function sendMessage() {
+  if (ticketStatus.value === 'closed') {
+    console.warn('Tentativo di invio su ticket chiuso');
+    return;
+  }
+
   if (!newMessage.value.trim()) return;
 
   try {
@@ -202,6 +254,7 @@ async function sendMessage() {
     console.error("Errore durante l'invio del messaggio:", error);
   }
 }
+
 
 function formatTimestamp(timestamp: string): string {
   return new Date(timestamp).toLocaleString();
