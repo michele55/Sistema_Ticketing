@@ -61,3 +61,32 @@ describe('Ticket chiuso - sola lettura', () => {
     cy.get('[data-cy="chat-input"]').should('be.disabled');
   });
 });
+
+describe('Accesso a ticket non esistente', () => {
+  let token;
+
+  beforeEach(() => {
+    cy.request('POST', 'http://localhost:3000/auth/login', {
+      email: 'admin@example.com',
+      password: 'password'
+    }).then((res) => {
+      token = res.body.access_token;
+      localStorage.setItem('token', token);
+    });
+  });
+
+  it('Mostra banner e fa redirect se il ticket non esiste', () => {
+    cy.visit('http://localhost:9000/#/chat/999999'); // ID inesistente
+
+    // Banner visibile con countdown
+    cy.contains('Il ticket richiesto non esiste').should('be.visible');
+    cy.contains('Redirect automatico tra').should('be.visible');
+
+    // Input della chat non presente
+    cy.get('[data-cy="chat-input"]').should('not.exist');
+
+    // Attendi il redirect e verifica nuova URL
+    cy.wait(3500); // aspettiamo il redirect automatico
+    cy.url().should('include', '/#/dashboard');
+  });
+});
