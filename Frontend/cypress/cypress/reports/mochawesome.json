@@ -1,0 +1,105 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 1,
+    "passes": 1,
+    "pending": 0,
+    "failures": 0,
+    "start": "2025-04-07T22:28:34.873Z",
+    "end": "2025-04-07T22:28:44.241Z",
+    "duration": 9368,
+    "testsRegistered": 1,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "eb438956-2d1e-465e-a731-721a16bd1250",
+      "title": "",
+      "fullFile": "e2e\\specNewTicket.cy.js",
+      "file": "e2e\\specNewTicket.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "78607e7f-bf4f-4faa-ad0e-dbef800cb709",
+          "title": "Creazione Nuovo Ticket da parte del Customer",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "Login come customer, clic su NUOVO TICKET e invio ticket",
+              "fullTitle": "Creazione Nuovo Ticket da parte del Customer Login come customer, clic su NUOVO TICKET e invio ticket",
+              "timedOut": null,
+              "duration": 7438,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// 1. Visita la pagina di login\ncy.visit('http://localhost:9000/#/');\n// 2. Login come customer\ncy.get('input[name=\"Email\"]').type('customer@example.com');\ncy.get('input[name=\"Password\"]').type('password');\ncy.get('button[type=\"submit\"]').click();\n// 3. Verifica che sia nella dashboard\ncy.url().should('include', '/Dashboard');\n// 4. Clic su \"NUOVO TICKET\"\ncy.get('.q-tab').contains('Nuovo Ticket').click();\n// 5. Inserisce titolo e descrizione\nconst titolo = 'Bug test Cypress ' + Date.now();\ncy.get('[data-cy=\"input-titolo\"]').type(titolo);\ncy.get('[data-cy=\"input-descrizione\"]').type('Questo ticket è stato creato automaticamente durante un test.');\n// Invia\ncy.get('[data-cy=\"btn-invia\"]').click();\ncy.get('.q-notification').should('be.visible').and('contain', 'Ticket creato con successo!');\n// 7. Verifica che il nuovo ticket sia stato creato e visibile nella lista\ncy.contains('Ticket Aperti').click();\ncy.contains(titolo, {\n  timeout: 5000\n}).should('exist');",
+              "err": {},
+              "uuid": "04a89613-eeef-45f5-928f-60c48f36d4a0",
+              "parentUUID": "78607e7f-bf4f-4faa-ad0e-dbef800cb709",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "04a89613-eeef-45f5-928f-60c48f36d4a0"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 7438,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.0.1"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.3"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "cypress/reports",
+        "overwrite": true,
+        "html": true,
+        "json": true
+      },
+      "version": "6.2.0"
+    }
+  }
+}
