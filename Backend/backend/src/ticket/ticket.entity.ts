@@ -25,7 +25,7 @@ export class Ticket {
   @Column({ default: 'open' })
   stato: string;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { nullable: false })
   @JoinColumn({ name: 'userId' }) // Specifica che questa relazione usa la colonna "customerId"
   user: User; // Relazione con l'utente
 
