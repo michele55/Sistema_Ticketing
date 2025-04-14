@@ -13,7 +13,7 @@ export class Messaggio {
   id: number;
   @Column('text')
   descrizione: string;
-  @ManyToOne(() => User, (user) => user.messaggi)
+  @ManyToOne(() => User, (user) => user.messaggi, { nullable: false })
   inviatoDa: User;
   @ManyToOne(() => Ticket, (ticket) => ticket.messaggi, { onDelete: 'CASCADE' })
   ticket: Ticket;

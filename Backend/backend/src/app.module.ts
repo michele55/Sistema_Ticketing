@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
+
 import { AuthModule } from './auth/auth.module';
 //import { User } from './user/user.entity';
 import { TicketModule } from './ticket/ticket.module';
@@ -23,7 +24,7 @@ import { Repository } from 'typeorm';
       password: 'accesso',
       database: 'ticketing_db',
       entities: [User, Ticket, Messaggio], // Percorso delle entità
-      synchronize: false, // Disabilita sincronizzazione automatica
+      synchronize: true, // Disabilita sincronizzazione automatica
     }),
     UserModule,
     MessaggioModule,
@@ -37,10 +38,23 @@ export class AppModule implements OnApplicationBootstrap {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Ticket)
+    private readonly ticketRepository: Repository<Ticket>,
+    @InjectRepository(Messaggio)
+    private readonly messaggioRepository: Repository<Messaggio>,
   ) {}
 
   async onApplicationBootstrap() {
     console.log('Eseguendo il popolamento del database...');
+
+    try {
+      // Cancellazione dei dati in Messaggio e Ticket, mantenendo User
+      await this.messaggioRepository.delete({}); // Cancella tutti i messaggi
+      await this.ticketRepository.delete({}); // Cancella tutti i ticket
+      console.log('I dati di Messaggio e Ticket sono stati cancellati');
+    } catch (error) {
+      console.error('Errore durante la cancellazione dei dati:', error);
+    }
 
     try {
       // Popolamento utenti

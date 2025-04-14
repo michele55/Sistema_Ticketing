@@ -10,5 +10,6 @@ import { User } from 'src/user/user.entity';
   imports: [TypeOrmModule.forFeature([Messaggio, Ticket, User])],
   providers: [MessaggioService],
   controllers: [MessageController],
+  exports: [MessaggioService, TypeOrmModule],
 })
 export class MessaggioModule {}
