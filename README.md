@@ -31,7 +31,7 @@ Questo progetto è un'applicazione full-stack per la gestione di ticket di suppo
 <div style="display: flex; flex-direction: row; align-items: flex-start;">
   <div style="flex-basis: 50%; padding-right: 20px;">
     <ul>
-      <li>Registrazione e login degli utenti.</li>
+      <li>Login degli utenti</li>
       <li>Ruoli definiti: <code>Admin</code>, <code>Sviluppatore</code>, <code>Utente</code>.</li>
       <li>Accesso ai ticket basato sul ruolo.</li>
     </ul>
