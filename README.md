@@ -24,22 +24,64 @@ Questo progetto è un'applicazione full-stack per la gestione di ticket di suppo
 
 ## 🚀 Funzionalità principali
 
-- Registrazione e login degli utenti
-- <img width="422" height="352" alt="image" src="https://github.com/user-attachments/assets/da2c0023-a17b-481d-92de-4a1b7fbdb1ce" />
-- Creazione e visualizzazione dei ticket
- <img width="338" height="393" alt="image" src="https://github.com/user-attachments/assets/0b1bf9fb-e2a2-46de-a2e0-9cae6d93d265" />
-<img width="420" height="283" alt="image" src="https://github.com/user-attachments/assets/39f266ac-a894-43d7-ab3f-6566e3fce3fc" />
-<img width="387" height="415" alt="image" src="https://github.com/user-attachments/assets/8691a394-df71-4a65-b2c4-52c1134acfe9" />
-- Assegnazione dei ticket da parte degli admin e Gestione dello stato del ticket: `open`, `in_progress`, `closed`
- <img width="1405" height="343" alt="image" src="https://github.com/user-attachments/assets/ee9094c6-c350-41ea-9313-82de55b8177c" />
+---
 
-- Chat  tra utente e sviluppatore su ogni ticket
-  <img width="1546" height="676" alt="image" src="https://github.com/user-attachments/assets/c2a6686e-bfbd-4b6c-9e97-c40659627cbb" />
+### Gestione Utenti e Ruoli
 
-- Ruoli: `Admin`, `Sviluppatore`, `Utente`
-- Accesso ai ticket basato sul ruolo
-- Interfaccia responsive sviluppata con Quasar
-- Report test automatizzati in formato HTML
+<div style="display: flex; flex-direction: row; align-items: flex-start;">
+  <div style="flex-basis: 50%; padding-right: 20px;">
+    <ul>
+      <li>**Registrazione e login** degli utenti.</li>
+      <li>**Ruoli** definiti: <code>Admin</code>, <code>Sviluppatore</code>, <code>Utente</code>.</li>
+      <li>Accesso ai ticket basato sul ruolo.</li>
+    </ul>
+  </div>
+  <div style="flex-basis: 50%;">
+    <img width="422" height="352" alt="Schermata di Login" src="https://github.com/user-attachments/assets/da2c0023-a17b-481d-92de-4a1b7fbdb1ce" style="max-width: 100%; height: auto;"/>
+  </div>
+</div>
+
+---
+
+### 🎟️ Creazione e Visualizzazione Ticket
+
+<div style="display: flex; flex-direction: row; align-items: flex-start; margin-top: 20px;">
+  <div style="flex-basis: 50%; padding-right: 20px;">
+    <ul>
+      <li>**Creazione e visualizzazione** dei ticket.</li>
+      <li>**Gestione dello stato** del ticket: <code>open</code>, <code>in_progress</code>, <code>closed</code>.</li>
+      <li>**Assegnazione** dei ticket da parte degli admin.</li>
+    </ul>
+  </div>
+  <div style="flex-basis: 50%; display: flex; flex-direction: column; gap: 10px;">
+    <img width="338" height="393" alt="Schermata creazione ticket 1" src="https://github.com/user-attachments/assets/0b1bf9fb-e2a2-46de-a2e0-9cae6d93d265" style="max-width: 100%; height: auto;"/>
+    <img width="420" height="283" alt="Schermata creazione ticket 2" src="https://github.com/user-attachments/assets/39f266ac-a894-43d7-ab3f-6566e3fce3fc" style="max-width: 100%; height: auto;"/>
+    <img width="387" height="415" alt="Schermata visualizzazione ticket" src="https://github.com/user-attachments/assets/8691a394-df71-4a65-b2c4-52c1134acfe9" style="max-width: 100%; height: auto;"/>
+  </div>
+</div>
+
+<p align="center">
+  <img width="1405" height="343" alt="Gestione stato e assegnazione ticket" src="https://github.com/user-attachments/assets/ee9094c6-c350-41ea-9313-82de55b8177c" style="max-width: 100%; height: auto;"/>
+</p>
+
+---
+
+### 💬 Chat integrata e Interfaccia
+
+<div style="display: flex; flex-direction: row; align-items: center; margin-top: 20px;">
+  <div style="flex-basis: 50%;">
+    <img width="1546" height="676" alt="Schermata Chat" src="https://github.com/user-attachments/assets/c2a6686e-bfbd-4b6c-9e97-c40659627cbb" style="max-width: 100%; height: auto;"/>
+  </div>
+  <div style="flex-basis: 50%; padding-left: 20px;">
+    <ul>
+      <li>Funzionalità di **Chat** tra utente e sviluppatore integrata su ogni ticket.</li>
+      <li>Interfaccia **responsive** sviluppata con **Quasar**.</li>
+      <li>Report test automatizzati in formato HTML.</li>
+    </ul>
+  </div>
+</div>
+
+---
 
 
 ---
