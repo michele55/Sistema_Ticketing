@@ -76,7 +76,6 @@ Questo progetto è un'applicazione full-stack per la gestione di ticket di suppo
     <ul>
       <li>Funzionalità di Chat tra utente e sviluppatore integrata su ogni ticket.</li>
       <li>Interfaccia responsive sviluppata con Quasar.</li>
-   
     </ul>
   </div>
 </div>
