@@ -37,7 +37,7 @@ Questo progetto è un'applicazione full-stack per la gestione di ticket di suppo
     </ul>
   </div>
   <div style="flex-basis: 50%;">
-    <img width="422" height="352" alt="Schermata di Login" src="https://github.com/user-attachments/assets/da2c0023-a17b-481d-92de-4a1b7fbdb1ce" style="max-width: 100%; height: auto;"/>
+    <img width="425" height="315" alt="image" src="https://github.com/user-attachments/assets/ce275e11-ffc0-41ee-9809-b6c1def3575d" />
   </div>
 </div>
 
