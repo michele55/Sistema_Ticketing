@@ -7,7 +7,7 @@ Questo progetto è un'applicazione full-stack per la gestione di ticket di suppo
 ### Backend
 - [NestJS](https://nestjs.com/) – framework backend basato su Node.js
 - TypeORM – ORM per la gestione del database
-- PostgreSQL – Database relazionale
+- MySQL – Database relazionale
 - Passport & JWT – Autenticazione e gestione dei ruoli
 - bcrypt – Hashing delle password
 
