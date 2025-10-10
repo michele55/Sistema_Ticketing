@@ -25,7 +25,9 @@ Questo progetto è un'applicazione full-stack per la gestione di ticket di suppo
 ## 🚀 Funzionalità principali
 
 - Registrazione e login degli utenti
+- <img width="422" height="352" alt="image" src="https://github.com/user-attachments/assets/da2c0023-a17b-481d-92de-4a1b7fbdb1ce" />
 - Creazione e visualizzazione dei ticket
+- 
 - Assegnazione dei ticket da parte degli admin
 - Chat in tempo reale tra utente e sviluppatore su ogni ticket
 - Gestione dello stato del ticket: `open`, `in_progress`, `closed`
@@ -33,6 +35,7 @@ Questo progetto è un'applicazione full-stack per la gestione di ticket di suppo
 - Accesso ai ticket basato sul ruolo
 - Interfaccia responsive sviluppata con Quasar
 - Report test automatizzati in formato HTML
+
 
 ---
 
