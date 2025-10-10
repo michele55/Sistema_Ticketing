@@ -62,7 +62,7 @@ Questo progetto è un'applicazione full-stack per la gestione di ticket di suppo
 
 <p align="center">
   <img width="1405" height="343" alt="Gestione stato e assegnazione ticket" src="https://github.com/user-attachments/assets/ee9094c6-c350-41ea-9313-82de55b8177c" style="max-width: 100%; height: auto;"/>
-  <img width="1405" height="343" alt="image" src="https://github.com/user-attachments/assets/a4bf915d-6f00-4143-bf19-cf0fd2a7a579 style="max-width: 100%; height: auto;" />
+  <img width="1405" height="343" alt="image" src="https://github.com/user-attachments/assets/a4bf915d-6f00-4143-bf19-cf0fd2a7a579" style="max-width: 100%; height: auto;" />
 
 </p>
 
