@@ -31,8 +31,8 @@ Questo progetto è un'applicazione full-stack per la gestione di ticket di suppo
 <div style="display: flex; flex-direction: row; align-items: flex-start;">
   <div style="flex-basis: 50%; padding-right: 20px;">
     <ul>
-      <li>**Registrazione e login** degli utenti.</li>
-      <li>**Ruoli** definiti: <code>Admin</code>, <code>Sviluppatore</code>, <code>Utente</code>.</li>
+      <li>Registrazione e login degli utenti.</li>
+      <li>Ruoli definiti: <code>Admin</code>, <code>Sviluppatore</code>, <code>Utente</code>.</li>
       <li>Accesso ai ticket basato sul ruolo.</li>
     </ul>
   </div>
@@ -48,9 +48,9 @@ Questo progetto è un'applicazione full-stack per la gestione di ticket di suppo
 <div style="display: flex; flex-direction: row; align-items: flex-start; margin-top: 20px;">
   <div style="flex-basis: 50%; padding-right: 20px;">
     <ul>
-      <li>**Creazione e visualizzazione** dei ticket.</li>
-      <li>**Gestione dello stato** del ticket: <code>open</code>, <code>in_progress</code>, <code>closed</code>.</li>
-      <li>**Assegnazione** dei ticket da parte degli admin.</li>
+      <li>Creazione e visualizzazione dei ticket.</li>
+      <li>Gestione dello stato del ticket: <code>open</code>, <code>in_progress</code>, <code>closed</code>.</li>
+      <li>Assegnazione dei ticket da parte degli admin.</li>
     </ul>
   </div>
   <div style="flex-basis: 50%; display: flex; flex-direction: column; gap: 10px;">
@@ -74,9 +74,9 @@ Questo progetto è un'applicazione full-stack per la gestione di ticket di suppo
   </div>
   <div style="flex-basis: 50%; padding-left: 20px;">
     <ul>
-      <li>Funzionalità di **Chat** tra utente e sviluppatore integrata su ogni ticket.</li>
-      <li>Interfaccia **responsive** sviluppata con **Quasar**.</li>
-      <li>Report test automatizzati in formato HTML.</li>
+      <li>Funzionalità di Chat tra utente e sviluppatore integrata su ogni ticket.</li>
+      <li>Interfaccia responsive sviluppata con Quasar.</li>
+   
     </ul>
   </div>
 </div>
