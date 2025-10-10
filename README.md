@@ -54,7 +54,7 @@ Questo progetto è un'applicazione full-stack per la gestione di ticket di suppo
     </ul>
   </div>
   <div style="flex-basis: 50%; display: flex; flex-direction: column; gap: 10px;">
-    <img width="338" height="393" alt="Schermata creazione ticket 1" src="https://github.com/user-attachments/assets/0b1bf9fb-e2a2-46de-a2e0-9cae6d93d265" style="max-width: 100%; height: auto;"/>
+    <img width="280" height="auto" alt="Schermata creazione ticket 1" src="https://github.com/user-attachments/assets/0b1bf9fb-e2a2-46de-a2e0-9cae6d93d265" style="max-width: 100%; height: auto;"/>
     <img width="auto" height="150" alt="Schermata creazione ticket 2" src="https://github.com/user-attachments/assets/39f266ac-a894-43d7-ab3f-6566e3fce3fc" style="max-width: 100%; height: auto;"/>
     <img width="387" height="415" alt="Schermata visualizzazione ticket" src="https://github.com/user-attachments/assets/8691a394-df71-4a65-b2c4-52c1134acfe9" style="max-width: 100%; height: auto;"/>
   </div>
